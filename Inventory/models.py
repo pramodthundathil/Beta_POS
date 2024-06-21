@@ -91,5 +91,22 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+class Customer(models.Model):
+    name = models.CharField(max_length=255)
+    phone = models.CharField(max_length=20, null=True)
+    email = models.EmailField(null=True)
+    gst_number = models.CharField(max_length=15, unique=True, validators=[MinLengthValidator(15), MaxLengthValidator(15)])
+    city = models.CharField(max_length=255)
+    state = models.CharField(null=True,max_length=255)
+    country = models.CharField(max_length=255)
+    pincode = models.CharField(max_length=10)
+    contact_info = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    staus = models.BooleanField(default=True)
+
+    def __str__(self):
+        return str(self.name)
 
 

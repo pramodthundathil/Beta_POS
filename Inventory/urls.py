@@ -20,5 +20,7 @@ urlpatterns = [
     path('ListTax', views.ListTax, name='ListTax'),
 
 
-    path("invoice",views.invoice,name="invoice")
+    path("invoice",views.invoice,name="invoice"),
+    path("add_customer",views.add_customer,name="add_customer"),
+    path("list_customer",views.list_customer,name="list_customer"),
 ]

@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from .models import *
 from django.contrib import messages
 from .forms import ProductForm
+from django.http import HttpResponse
+
 
 # Create your views here.
 
@@ -142,3 +144,55 @@ def ListTax(request):
 
 def invoice(request):
     return render(request,"invoice.html")
+
+
+
+
+
+
+def add_customer(request):
+    if request.method == "POST":
+        name = request.POST.get('name')
+        phone = request.POST.get('phone')
+        email = request.POST.get('email')
+        gst = request.POST.get('gst')
+        city = request.POST.get('city')
+        state = request.POST.get('state')
+        country = request.POST.get('country')
+        pincode = request.POST.get('pincode')
+        contact_info = request.POST.get('contact_info')
+
+        # Creating a new Customer object
+        customer = Customer(
+            name=name,
+            phone=phone,
+            email=email,
+            gst_number=gst,
+            city=city,
+            state=state,
+            country=country,
+            pincode=pincode,
+            contact_info=contact_info
+        )
+
+        try:
+            # Saving the object to the database
+            customer.save()
+            messages.info(request, "customer addedd.............")
+            return redirect("POS")
+        # Redirect to a success page or the customer's detail page
+        except Exception as e:
+            return HttpResponse(f"Error: {e}")
+
+    return redirect("POS")
+
+
+def list_customer(request):
+    customer = Customer.objects.all()
+    context = {
+        "customer":customer
+    }
+    return render(request,"list-customers.html",context)
+
+
+
