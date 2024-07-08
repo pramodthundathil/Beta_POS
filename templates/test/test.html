@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Autocomplete Input</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.2/awesomplete.min.css" />
+</head>
+<body>
+    <h2>Autocomplete Input Example</h2>
+    <input id="myInput" class="awesomplete" data-list="Option 1, Option 2, Option 3" placeholder="Type here...">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.2/awesomplete.min.js"></script>
+    <script>
+        new Awesomplete(document.getElementById('myInput'), {
+            list: ["Option 1", "Option 2", "Option 3"],
+            autoFirst: true, // Auto-select first option on type
+            filter: Awesomplete.FILTER_STARTSWITH // Match from start of the input
+        });
+    </script>
+</body>
+</html>

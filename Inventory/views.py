@@ -3,6 +3,7 @@ from .models import *
 from django.contrib import messages
 from .forms import ProductForm
 from django.http import HttpResponse
+from POS.models import *
 
 
 # Create your views here.
@@ -146,11 +147,7 @@ def invoice(request):
     return render(request,"invoice.html")
 
 
-
-
-
-
-def add_customer(request):
+def add_customer(request,pk):
     if request.method == "POST":
         name = request.POST.get('name')
         phone = request.POST.get('phone')
@@ -179,7 +176,11 @@ def add_customer(request):
             # Saving the object to the database
             customer.save()
             messages.info(request, "customer addedd.............")
-            return redirect("POS")
+            order = Order.objects.get(id = pk)
+            order.customer = customer
+            order.save()
+            return redirect("POS",pk = pk)
+
         # Redirect to a success page or the customer's detail page
         except Exception as e:
             return HttpResponse(f"Error: {e}")

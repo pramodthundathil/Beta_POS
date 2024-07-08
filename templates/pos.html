@@ -15,16 +15,27 @@
     <link rel="stylesheet" href="{%static 'assets/vendor/@fortawesome/fontawesome-free/css/all.min.css' %}">
     <link rel="stylesheet" href="{%static 'assets/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css' %}">
     <link rel="stylesheet" href="{%static 'assets/vendor/remixicon/fonts/remixicon.css' %}">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+
 
     <style>
         .head-tr-class th {
             background-color: #FF7E41;
         }
-        .product-tr td{
+
+        .product-tr td {
             background-color: #f7b596;
+        }
+
+        .hover-card-class:hover {
+            border: 1px solid black;
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+
         }
     </style>
 </head>
+{% block content %}
 
 <body class="  ">
     <!-- loader Start -->
@@ -47,8 +58,8 @@
                 </div>
                 <div class="iq-search-bar device-search">
                     <form action="#" class="searchbox">
-                        <a class="search-link" href="#"><i class="ri-search-line"></i></a>
-                        <input type="text" class="text search-input" placeholder="Search here...">
+                        <!-- <a class="search-link" href="#"><i class="ri-search-line"></i></a>
+                        <input type="text" class="text search-input" placeholder="Search here..."> -->
                     </form>
                 </div>
                 <div class="d-flex align-items-center">
@@ -277,10 +288,6 @@
         </div>
     </div>
     <div class="wrapper" style="margin-top: 100px !important;">
-
-
-
-
         <!-- <div class="content-page"> -->
         <div class="container-fluid">
             <div class="row">
@@ -288,7 +295,8 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
-                                <h4 class="card-title">POS <span style="text-align: right;">#1234</span></h4>
+                                <h4 class="card-title">Invoice <span
+                                        style="text-align: right;">#{{order.invoice_number}}</span></h4>
                             </div>
                         </div>
                         <div class="card-body">
@@ -297,211 +305,171 @@
                                 <div class="iq-alert-text"><b>Alert</b> {{message}}</div>
                             </div>
                             {% endfor %}
-                            <form action="">
-                                <div class="input-group">
-                                    <select class="custom-select">
-                                        <option selected disabled>Choose Customer</option>
-                                        {% for i in customer%}
-                                        <option value="{{i.id}}">{{i}}</option>
-                                        {% endfor %}
-
-                                    </select>
+                            <form id="orderForm">
+                                <div class="input-group mb-3">
+                                    <input type="hidden" id="orderId" name="order_id" value="{{ order.id }}">
+                                    <input type="text" id="customerInput" name="customer" placeholder="Choose Customer"
+                                        aria-describedby="button-addon2" class="form-control"
+                                        value="{{ order.customer }}">
+                                    <button class="btn btn-outline-primary" type="button" data-toggle="modal"
+                                        data-target=".bd-example-modal-lg" data-toggle="tooltip" data-placement="top"
+                                        title="" data-original-title="Add Customer" id="button-addon2">
+                                        <svg class="svg-icon" id="p-dash10" width="20" height="20"
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="8.5" cy="7" r="4"></circle>
+                                            <polyline points="17 11 19 13 23 9"></polyline>
+                                        </svg>
+                                    </button>
+                                </div>
                             </form>
 
-                            <div class="input-group-append">
-                                <button class="btn  btn-success dropone" type="button" data-toggle="modal"
-                                    data-target=".bd-example-modal-lg" data-toggle="tooltip" data-placement="top"
-                                    title="" data-original-title="Add Customer">
-                                    <svg class="svg-icon" id="p-dash10" width="20" height="20"
-                                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                        <circle cx="8.5" cy="7" r="4"></circle>
-                                        <polyline points="17 11 19 13 23 9"></polyline>
-                                    </svg>
-                                </button>
 
+                            <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Add new Customer</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="post" action="{%url 'add_customer' order.id %}">
+                                                {% csrf_token %}
+                                                <div class="row">
+                                                    <div class="form-group col-md-6">
+                                                        <label for="fname">Customer Name:</label>
+                                                        <input type="text" class="form-control" name="name" id="fname"
+                                                            placeholder="Customer Name" data-errors="Please Enter Name."
+                                                            required>
+                                                        <div class="help-block with-errors"></div>
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label for="lname">Phone:</label>
+                                                        <input type="number" class="form-control" name="phone"
+                                                            id="lname" placeholder="Phone Number">
+                                                    </div>
 
-                                <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
-                                    aria-hidden="true">
-                                    <div class="modal-dialog modal-lg">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Add new Customer</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
-                                                    aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form method="post" action="{%url 'add_customer' %}">
-                                                    {% csrf_token %}
-                                                    <div class="row">
-                                                        <div class="form-group col-md-6">
-                                                            <label for="fname">Customer Name:</label>
-                                                            <input type="text" class="form-control" name="name"
-                                                                id="fname" placeholder="Customer Name"
-                                                                data-errors="Please Enter Name." required>
+                                                    <div class="form-group col-md-6">
+                                                        <label for="email">Email:</label>
+                                                        <input type="email" name="email" class="form-control" id="email"
+                                                            placeholder="Email">
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Gst Number:</label>
+                                                            <input type="text" class="form-control" name="gst"
+                                                                id="lname" placeholder="Gst Number">
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <h5 class="mb-3">Address</h5>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label>Address</label>
+                                                            <textarea class="form-control" rows="4"
+                                                                name="contact_info"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>City *</label>
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Enter City" name="city" required>
                                                             <div class="help-block with-errors"></div>
                                                         </div>
-                                                        <div class="form-group col-md-6">
-                                                            <label for="lname">Phone:</label>
-                                                            <input type="number" class="form-control" name="phone"
-                                                                id="lname" placeholder="Phone Number">
-                                                        </div>
-
-                                                        <div class="form-group col-md-6">
-                                                            <label for="email">Email:</label>
-                                                            <input type="email" name="email" class="form-control"
-                                                                id="email" placeholder="Email">
-                                                        </div>
-                                                        <div class="form-group col-md-6">
-                                                            <div class="form-group">
-                                                                <label>Gst Number:</label>
-                                                                <input type="text" class="form-control" name="gst"
-                                                                    id="lname" placeholder="Gst Number">
-
-                                                            </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>State *</label>
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Enter State" name="state" required>
+                                                            <div class="help-block with-errors"></div>
                                                         </div>
                                                     </div>
-                                                    <hr>
-                                                    <h5 class="mb-3">Address</h5>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div class="form-group">
-                                                                <label>Address</label>
-                                                                <textarea class="form-control" rows="4"
-                                                                    name="contact_info"></textarea>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>City *</label>
-                                                                <input type="text" class="form-control"
-                                                                    placeholder="Enter City" name="city" required>
-                                                                <div class="help-block with-errors"></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>State *</label>
-                                                                <input type="text" class="form-control"
-                                                                    placeholder="Enter State" name="state" required>
-                                                                <div class="help-block with-errors"></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>Country *</label>
-                                                                <input type="text" class="form-control"
-                                                                    placeholder="Enter Country" name="country" required>
-                                                                <div class="help-block with-errors"></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label>Pincode *</label>
-                                                                <input type="text" class="form-control"
-                                                                    placeholder="Enter Pincode" name="pincode" required>
-                                                                <div class="help-block with-errors"></div>
-                                                            </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Country *</label>
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Enter Country" name="country" required>
+                                                            <div class="help-block with-errors"></div>
                                                         </div>
                                                     </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Pincode *</label>
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Enter Pincode" name="pincode" required>
+                                                            <div class="help-block with-errors"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
 
-                                                    <button type="submit" class="btn btn-primary">Add Customer</button>
-                                                </form>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Add Customer</button>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Close</button>
 
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <table class="table table-striped mt-3">
-                            <tr class="head-tr-class">
-                                <th>Product</th>
-                                <th>Price</th>
-                                <th>Tax</th>
-                                <th>Quantity</th>
-                                <th>SubTotal</th>
-                            </tr>
-                            <tr>
-                                <td>Shirt</td>
-                                <td>100</td>
-                                <td>10</td>
-                                <td>2</td>
-                                <td>110</td>
-                            </tr>
-                            <tr>
-                                <td>Shirt</td>
-                                <td>100</td>
-                                <td>10</td>
-                                <td>2</td>
-                                <td>110</td>
-                            </tr>
-                            <tr>
-                                <td>Shirt</td>
-                                <td>100</td>
-                                <td>10</td>
-                                <td>2</td>
-                                <td>110</td>
-                            </tr>
-                            <tr>
-                                <th colspan="5"></th>
-                            </tr>
-
-                            <tr>
-                                <th colspan="4" class="text-center bg-info-light">Grand Total</th>
-                                <th style="font-size: x-large;" class="bg-info-light">2200</th>
-                            </tr>
-
-                            <tr>
-                                <td colspan="2"><a href="" class="btn btn-warning">Print Invoice</a></td>
-                                <td colspan="2"><a href="" class="btn btn-primary">Settle Bill</a></td>
-                                <td colspan="1"></td>
-                            </tr>
-                        </table>
-
-
+                    </div>
+                    <div class="tableitems" id="orderItemsTable">
+                        {% include 'ajaxtemplates/order_items_table.html' %}
                     </div>
                 </div>
 
-            </div>
-            <div class="col-sm-12 col-lg-6">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between">
-                        <div class="header-title">
-                            <h4 class="card-title">Products</h4>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <form id="search-form">
-                            <input type="text" class="form-control" name="search" id="search-input" placeholder="Search Product By code or name">
-                        </form>
-                        <div class="product-table mt-3 bg-light-info">
-                            <div class="card">
-                                <table class="table table-striped">
-                                    <tbody id="product-table-body">
 
-                                    </tbody>
-                                </table>
+
+                <div class="col-sm-12 col-lg-6">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Products</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <form id="search-form">
+                                <input type="text" class="form-control" name="search" id="search-input"
+                                    placeholder="Search Product By code or name">
+                            </form>
+                            <div class="product-table mt-3 bg-light-info">
+                                <div class="" style="height: 200px !important;overflow-y: scroll;">
+                                    <div class="table table-striped">
+                                        <div id="product-table-body" class="row p-3">
+
+
+
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <div id="customerdetails">
+
+                        {% include 'ajaxtemplates/customerdetailsonpos.html'%}
+                    </div>
+
+
+
                 </div>
             </div>
         </div>
     </div>
-    </div>
 
-
-    </div>
     <!-- Wrapper End-->
     <footer class="iq-footer">
         <div class="container-fluid">
@@ -524,6 +492,7 @@
             </div>
         </div>
     </footer>
+    {% endblock %}
     <!-- Backend Bundle JavaScript -->
     <script src="{%static 'assets/js/backend-bundle.min.js' %}"></script>
 
@@ -539,44 +508,177 @@
     <!-- app JavaScript -->
     <script src="{%static 'assets/js/app.js' %}"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <!-- custome scripts -->
-     <script>
-    $(document).ready(function(){
-        $('#search-input').keyup(function(){
-            var query = $(this).val();
+
+    <script>
+        // product serach on search input 
+        $(document).ready(function () {
+            $('#search-input').keyup(function () {
+                var query = $(this).val();
+                $.ajax({
+                    url: "{% url 'search_product' %}",
+                    data: {
+                        'search': query
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        $('#product-table-body').empty();
+                        if (data.products.length > 0) {
+                            data.products.forEach(function (product) {
+                                var row =
+   
+                            '<div class="col-md-4">' +
+                                '<a href="#" class="add-to-order" data-product-id="' + product.id + '">' +
+                                    '<div class="card text-center p-3 hover-card-class">' +
+                                        '<h4>' + product.name + '</h4>' +
+                                        '<h6>Price: ' + product.price + ' (' + product.tax + ')</h6>' +
+                                        '<p>Stock: ' + product.stock + '</p>' +
+                                    '</div>' +
+                                '</a>' +
+                            '</div>';
+
+                                $('#product-table-body').append(row);
+                            });
+                        } else {
+                            $('#product-table-body').append('<tr><td colspan="5">No products found</td></tr>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('AJAX Error:', status, error);
+                    }
+                });
+            });
+        });
+
+
+        // customer prediction on customer perdiction input 
+
+        $(document).ready(function () {
+            if (typeof $.ui !== 'undefined') {
+                console.log("jQuery UI loaded successfully.");
+            } else {
+                console.log("Error: jQuery UI not loaded.");
+            }
+
+            var customers = [
+                {% for customer in customer %}
+                {
+                id: "{{ customer.id }}",
+                value: "{{ customer.name }}",
+                label: "{{ customer.name }}",
+                contact: "{{ customer.phone }}",
+                gst: "{{ customer.gst_number }}",
+                address: "{{ customer.city }}, {{ customer.state }}, {{ customer.country }} - {{ customer.pincode }}"
+            },
+            {% endfor %}
+            ];
+
+        //    auto complete prediction and onclick clear input 
+
+        $("#customerInput").autocomplete({
+            source: customers,
+            select: function (event, ui) {
+                var selectedCustomer = ui.item;
+                console.log("Selected customer details:", customerdetails);
+
+                // Set the input field value to the selected customer's name
+                $("#customerInput").val(selectedCustomer.label);
+
+                // Perform an AJAX request to update the order's customer field
+                updateOrderCustomer(selectedCustomer.id);
+
+                // Prevent the default autocomplete behavior (which may replace the input value)
+                return false;
+            }
+        }).on("focus", function () {
+            // Clear the input field when it is clicked
+            $(this).val("");
+        });
+
+        // ajax funtion to add customer in to order it will add upon input the form 
+
+        function updateOrderCustomer(customerId) {
+            console.log("Updating order with customer ID:",); // Debug log
             $.ajax({
-                url: "{% url 'search_product' %}",
+                url: "{% url 'update_order_customer' %}",
+                type: "POST",
                 data: {
-                    'search': query
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    
+                    customer_id: customerId
                 },
-                dataType: 'json',
-                success: function(data){
-                    $('#product-table-body').empty();
-                    if (data.products.length > 0) {
-                        data.products.forEach(function(product){
-                            var row = '<tr class="product-tr">'+
-                                '<th> Name:'+product.name+'</th>'+
-                                '<th> Price:'+product.price+'</th>'+
-                                '<th>'+product.tax+'</th>'+
-                                '<th> Stock:'+product.stock+'</th>'+
-                                '<td><a href="#" class="btn btn-outline-info">Add</a></td>'+
-                                '</tr>';
-                            $('#product-table-body').append(row);
-                        });
+                success: function (response) {
+                    console.log("Order customer updated successfully.");
+                    // Update the customerdetails element with the response HTML
+                    $("#customerdetails").html(response.html);
+                },
+                error: function (xhr, errmsg, err) {
+                    console.log("Error updating order customer:", errmsg);
+                }
+            });
+        }
+        });
+
+
+        // order added to the item table 
+
+
+        $(document).on('click', '.add-to-order', function (e) {
+            e.preventDefault();
+            var productId = $(this).data('product-id');
+            $.ajax({
+                url: "{% url 'add_order_item' order.id %}",
+                type: "POST",
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    product_id: productId
+                },
+                success: function (response) {
+                    if (response.success) {
+                        console.log("Add To order success....")
+                        $("#orderItemsTable").html(response.html);
                     } else {
-                        $('#product-table-body').append('<tr><td colspan="5">No products found</td></tr>');
+                        alert(response.error);
                     }
                 },
-                error: function(xhr, status, error) {
-                    console.error('AJAX Error:', status, error);
+                error: function (xhr, errmsg, err) {
+                    console.log("Error adding product to order:", errmsg);
                 }
             });
         });
-    });
+
+
+
+        // increase quantity of item 
+        $(document).on('click', '.increase-quantity, .decrease-quantity', function (e) {
+            e.preventDefault();
+            var itemId = $(this).data('item-id');
+            var action = $(this).hasClass('increase-quantity') ? 'increase' : 'decrease';
+            $.ajax({
+                url: "{% url 'update_order_item_quantity' %}",
+                type: "POST",
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    item_id: itemId,
+                    action: action
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $("#orderItemsTable").html(response.html);
+                    } else {
+                        alert(response.error);
+                    }
+                },
+                error: function (xhr, errmsg, err) {
+                    console.log("Error updating order item quantity:", errmsg);
+                }
+            });
+        });
+
     </script>
-    
 </body>
 
 </html>
