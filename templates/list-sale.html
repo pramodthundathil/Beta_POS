@@ -38,7 +38,8 @@
                                 </th>
                                 <th>Order Number</th>
                                 <th>date</th>
-                                <th>Status</th>
+                                <th>Bill Amount</th>
+                                <th>Payment Status</th>
                                 <th>Customer</th>
                                 <th>Action</th>
                             </tr>
@@ -59,14 +60,19 @@
                                 {{m.invoice_number}}</td>
                                 <!-- <td>{{m.code}}</td> -->
                                 <td class="m-status-false">{{m.order_date}}</td>
+                                <th>{{m.total_amount}}</th>
                                 
                                 <th>
-                                    {% if m.status == False %}
-                                    <span class="badge bg-danger">Not available</span>
+                                    {% if m.payment_status1 == 'UNPAID' %}
+                                    <span class="badge bg-danger">{{m.payment_status1}}</span>
+                                    {% elif m.payment_status1 == 'PAID' %}
+                                    <span class="badge bg-success">{{m.payment_status1}}</span>
+                                    {% elif m.payment_status1 == 'PARTIALLY' %}
+                                    <span class="badge bg-warning">{{m.payment_status1}}</span>
                                     {% else %}
-                                    <span class="badge bg-success">Available</span>
-
+                                    <span class="badge bg-dark">UNKNOWN</span>
                                     {% endif %}
+                                    
                                 </th>
                                 <td>
                                     {{m.customer}}

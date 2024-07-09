@@ -31,3 +31,12 @@ def SignIn(request):
 def SignOut(request):
     logout(request)
     return redirect('SignIn')
+
+# In views.py
+from django.shortcuts import render
+
+def custom_500(request):
+    return render(request, 'errorpage/pages-error-500.html', status=404)
+
+def custom_404(request, exception):
+    return render(request, 'errorpage/pages-error.html', status=500)

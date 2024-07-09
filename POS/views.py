@@ -158,3 +158,28 @@ def update_order_item_quantity(request):
     return JsonResponse({"success": False, "error": "Invalid request"})
 
 
+@csrf_exempt
+def update_order_payment(request, order_id):
+    if request.method == 'POST':
+        payed_amount = float(request.POST.get('payed_amount'))
+        
+        try:
+            order = Order.objects.get(id=order_id)
+            order.payed_amount = payed_amount
+            order.balance_amount = order.total_amount - payed_amount
+            
+            if payed_amount == 0:
+                order.payment_status1 = 'UNPAID'
+            elif payed_amount >= order.total_amount:
+                order.payment_status1 = 'PAID'
+            else:
+                order.payment_status1 = 'PARTIALLY'
+                
+            order.save()
+            return JsonResponse({'success': True})
+        except Order.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Order not found'})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+

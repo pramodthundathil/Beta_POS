@@ -9,7 +9,11 @@ class Order(models.Model):
     order_date = models.DateTimeField(auto_now_add=True)
     total_amount = models.FloatField(default=0)  # Set default to 0
     total_tax = models.FloatField(default=0)
+    payment_status1 = models.CharField(max_length=20, default='UNPAID', choices=(("UNPAID","UNPAID"),("PAID","PAID"),("PARTIALLY","PARTIALLY")))
     payment_status = models.BooleanField(default=False)
+
+    payed_amount = models.FloatField(default=0)
+    balance_amount = models.FloatField()
 
     def update_totals(self):
         # Calculate total amount and total tax from associated OrderItems
@@ -22,6 +26,20 @@ class Order(models.Model):
         self.total_amount = total_amount
         self.total_tax = total_tax
         self.save()
+        
+    def save(self, *args, **kwargs):
+        # Update balance amount before saving
+        self.balance_amount = self.total_amount - self.payed_amount
+        
+        # Update payment status based on payed amount
+        if self.payed_amount == 0:
+            self.payment_status1 = 'UNPAID'
+        elif self.payed_amount >= self.total_amount:
+            self.payment_status1 = 'PAID'
+        else:
+            self.payment_status1 = 'PARTIALLY'
+        
+        super(Order, self).save(*args, **kwargs)
 
     def __str__(self):
         return f"Order {self.invoice_number} by {self.customer.name}"
@@ -40,7 +58,7 @@ class OrderItem(models.Model):
     def save(self, *args, **kwargs):
         self.unit_price = self.product.price  # Assuming the product has a price field
         self.total_price = self.unit_price * self.quantity
-        self.total_tax = self.tax_amount * self.quantity
+        self.total_tax = self.product.tax_amount * self.quantity
         super(OrderItem, self).save(*args, **kwargs)
 
     def __str__(self):

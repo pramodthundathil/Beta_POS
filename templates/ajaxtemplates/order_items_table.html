@@ -30,3 +30,81 @@
         <th style="font-size: x-large;" class="bg-info-light">{{ order.total_amount }}</th>
     </tr>
 </table>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between">
+        <div class="header-title">
+            <form id="payment" action="">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1">Total Amount:</span>
+                            <input type="number" class="form-control" readonly value="{{order.total_amount}}" name="total_amount">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1">Amount Paid</span>
+                            <input type="number" class="form-control" id="amount-paid" value="{{order.payed_amount}}" name="amount_paid">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1">Balance Amount</span>
+                            <input type="number" readonly class="form-control" id="balance-amount" value="{{order.balance_amount}}" name="balance_amount">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <h3 id="payment-status">{{order.payment_status1}}</h3>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="" class="btn btn-primary">Save and Print Invoice</a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="" class="btn btn-secondary">Save</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#amount-paid').on('input', function () {
+            var amountPaid = parseFloat($(this).val());
+            var totalAmount = parseFloat($('input[name="total_amount"]').val());
+            var balanceAmount = totalAmount - amountPaid;
+    
+            $('#balance-amount').val(balanceAmount);
+    
+            var paymentStatus;
+            if (amountPaid == 0) {
+                paymentStatus = 'UNPAID';
+            } else if (amountPaid >= totalAmount) {
+                paymentStatus = 'PAID';
+            } else {
+                paymentStatus = 'PARTIALLY';
+            }
+    
+            $('#payment-status').text(paymentStatus);
+    
+            // Send AJAX request to update the backend
+            $.ajax({
+                url: "{% url 'update_order_payment' order.id %}", // Update with your URL pattern name
+                type: "POST",
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    payed_amount: amountPaid
+                },
+                success: function (response) {
+                    console.log("Order payment updated successfully.");
+                },
+                error: function (xhr, errmsg, err) {
+                    console.log("Error updating order payment:", errmsg);
+                }
+            });
+        });
+    });
+</script>
