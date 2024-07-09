@@ -4,6 +4,7 @@ from django.contrib import messages
 from .forms import ProductForm
 from django.http import HttpResponse
 from POS.models import *
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
@@ -12,6 +13,7 @@ from POS.models import *
 ########################################## vendor management ############################################
 # 
 
+@login_required(login_url='SignIn')
 def add_vendor(request):
     if request.method == "POST":
         name = request.POST['name']
@@ -42,6 +44,7 @@ def add_vendor(request):
         return redirect('list_vendor')
     return render(request,"add-vendor.html") 
 
+@login_required(login_url='SignIn')
 def list_vendor(request):
     vendor = Vendor.objects.all()
 
@@ -55,6 +58,7 @@ def list_vendor(request):
 ############################ Product Management #################################
 
 
+@login_required(login_url='SignIn')
 def add_category(request):
     if request.method == "POST":
         name = request.POST['name']
@@ -71,6 +75,7 @@ def add_category(request):
     return render(request, 'add-category.html')
 
 
+@login_required(login_url='SignIn')
 def list_category(request):
     category = ProductCategory.objects.all()
     context = {
@@ -80,6 +85,7 @@ def list_category(request):
 
 
 
+@login_required(login_url='SignIn')
 def list_products(request):
     product = Product.objects.all()
     context = {
@@ -88,6 +94,7 @@ def list_products(request):
     return render(request,'list-product.html',context)
 
 
+@login_required(login_url='SignIn')
 def add_product(request):
     food_category = ProductCategory.objects.all()
     tax = Tax.objects.all()
@@ -125,6 +132,7 @@ def add_product(request):
     return render(request,'add-product.html',context)
 
 
+@login_required(login_url='SignIn')
 def AddTax(request):
     if request.method == "POST":
         name = request.POST.get('name')
@@ -135,6 +143,7 @@ def AddTax(request):
         return redirect("ListTax")
     return render(request,"add-tax-slab.html")
 
+@login_required(login_url='SignIn')
 def ListTax(request):
     tax = Tax.objects.all()
     context = {
@@ -146,6 +155,7 @@ def ListTax(request):
 
 
 
+@login_required(login_url='SignIn')
 def add_customer(request,pk):
     if request.method == "POST":
         name = request.POST.get('name')
@@ -187,6 +197,7 @@ def add_customer(request,pk):
     return redirect("POS")
 
 
+@login_required(login_url='SignIn')
 def list_customer(request):
     customer = Customer.objects.all()
     context = {

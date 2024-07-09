@@ -6,18 +6,21 @@ from .models import *
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required
 
 
 
 
 
 # Create your views here.
+
 def generate_serial_number():
         current_time = datetime.now()
         serial_number = current_time.strftime("%Y%m%d%H%M%S")
         return serial_number
 
 
+@login_required(login_url='SignIn')
 def CreateOrder(resuest):
     TokenU = generate_serial_number()
 
@@ -27,6 +30,7 @@ def CreateOrder(resuest):
     return redirect(POS,pk = order.id)
      
 
+@login_required(login_url='SignIn')
 def POS(request,pk):
     customer = Customer.objects.all()
     order = Order.objects.get(id = pk)
@@ -57,6 +61,7 @@ def search_product(request):
     return JsonResponse({'products': []})
 
 
+@login_required(login_url='SignIn')
 @csrf_exempt
 def update_order(request):
     if request.method == 'POST':
@@ -73,6 +78,7 @@ def update_order(request):
     return JsonResponse({'status': 'error'}, status=400)
 
 
+@login_required(login_url='SignIn')
 @csrf_exempt
 def update_order_customer(request):
     if request.method == 'POST':
@@ -94,11 +100,13 @@ def update_order_customer(request):
 
 
 
+@login_required(login_url='SignIn')
 def AddItemsToorder(reuest):
      return redirect('POS',pk=10)
 
 
 
+@login_required(login_url='SignIn')
 def list_sale(request):
     order = Order.objects.all()
 
@@ -109,6 +117,7 @@ def list_sale(request):
 
 
 
+@login_required(login_url='SignIn')
 @csrf_exempt
 def add_order_item(request,pk):
     if request.method == 'POST':
@@ -134,6 +143,7 @@ def add_order_item(request,pk):
             return JsonResponse({"success": False, "error": "Product not found"})
     return JsonResponse({"success": False, "error": "Invalid request"})
 
+@login_required(login_url='SignIn')
 @csrf_exempt
 def update_order_item_quantity(request):
     if request.method == 'POST':
@@ -183,6 +193,7 @@ def update_order_payment(request, order_id):
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 
+@login_required(login_url='SignIn')
 def invoice(request,pk):
     order = Order.objects.get(id = pk)
 
