@@ -58,7 +58,7 @@
                         <h3 id="payment-status">{{order.payment_status1}}</h3>
                     </div>
                     <div class="col-md-6">
-                        <a href="" class="btn btn-primary">Save and Print Invoice</a>
+                        <a href="{%url 'invoice' order.id %}" target="_blank" class="btn btn-primary">Save and Print Invoice</a>
                     </div>
                     <div class="col-md-6">
                         <a href="" class="btn btn-secondary">Save</a>

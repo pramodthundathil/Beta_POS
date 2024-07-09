@@ -183,3 +183,15 @@ def update_order_payment(request, order_id):
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 
+def invoice(request,pk):
+    order = Order.objects.get(id = pk)
+
+    order_items = order.orderitem_set.all()  # Get all OrderItems for the specific order
+
+    context = {
+        "order": order,
+        "order_items": order_items,
+    }
+    return render(request,"invoice.html",context)
+
+

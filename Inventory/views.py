@@ -143,8 +143,7 @@ def ListTax(request):
     return render(request,"list-tax.html",context)
 
 
-def invoice(request):
-    return render(request,"invoice.html")
+
 
 
 def add_customer(request,pk):
