@@ -108,5 +108,80 @@ class Customer(models.Model):
 
     def __str__(self):
         return str(self.name)
+    
+
+class PurchaseOrder(models.Model):
+    PURCHASE_TYPES = [
+        ('VAT', 'VAT'),
+        ('GST', 'GST'),
+        ('NO-TAX', 'NO-TAX'),
+    ]
+    
+    ORDER_STATUS_CHOICES = [
+        ('Closed', 'Closed'),
+        ('Active', 'Active'),
+        ('Expired', 'Expired'),
+    ]
+    
+    purchase_type = models.CharField(max_length=20, choices=PURCHASE_TYPES)
+    bill_date = models.DateTimeField(auto_now_add=True)
+    valid_till = models.DateTimeField()
+    supplier = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
+    place_of_supply = models.CharField(max_length=100)
+    purchase_item = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
+    quantity = models.FloatField()
+    purchase_price = models.FloatField()
+    discount = models.FloatField(help_text='in %', null=True, blank=True)
+    tax = models.FloatField()
+    cess = models.FloatField()
+    amount = models.FloatField()
+    status = models.BooleanField(default=True)
+    order_status = models.CharField(max_length=30, choices=ORDER_STATUS_CHOICES)
+
+    def __str__(self):
+        return f"PurchaseOrder {self.id} - {self.supplier}"
+    
+
+
+
+class Purchase(models.Model):
+    PURCHASE_TYPES = [
+        ('VAT', 'VAT'),
+        ('GST', 'GST'),
+        ('NO-TAX', 'NO-TAX'),
+    ]
+    PAYMENT_STATUS = (
+        ("UNPAID","UNPAID"),
+        ("PAID","PAID"),
+        ("PARTIALLY","PARTIALLY")
+    )
+    
+    purchase_type = models.CharField(max_length=20, choices=PURCHASE_TYPES)
+    bill_date = models.DateTimeField(auto_now_add=True)
+    supplier = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
+    payment_terms = models.IntegerField(help_text='Number of days, Credit Period', null=True, blank=True)
+    due_date = models.DateField(null=True, blank=True)
+    place_of_supply = models.CharField(max_length=100)
+    purchase_bill_number = models.CharField(max_length=255, null=True, blank=True)
+    purchase_order_number = models.CharField(max_length=20, null=True, blank=True)
+    purchase_order_date = models.DateField(null=True, blank=True)
+    purchase_item = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
+    quantity = models.FloatField()
+    purchase_price = models.FloatField()
+    discount = models.FloatField(help_text='in %', null=True, blank=True)
+    tax = models.FloatField()
+    amount = models.FloatField()
+    paid_amount = models.FloatField()
+    balance_amount = models.FloatField()
+    payment_status = models.CharField(max_length=20,choices=PAYMENT_STATUS)
+    shipping_cost = models.FloatField(null=True, blank=True)
+    recived_date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Purchase {self.id} - {self.supplier}"
+
+
+
+
 
 

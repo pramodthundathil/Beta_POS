@@ -1,0 +1,71 @@
+{% extends 'index.html' %}
+{% block content %}
+
+<div class="category-add-list">
+    <div class="content-page">
+        <div class="container-fluid add-form-list">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Add Purchase</h4>
+                            </div>
+                        </div>
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-sm-12 col-lg-6">
+                                    <div class="card">
+                                        <div class="card-header d-flex justify-content-between">
+                                            <div class="header-title">
+                                                <h4 class="card-title">Invoice <span
+                                                        style="text-align: right;">#{{order.invoice_number}}</span></h4>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            {% for message in messages %}
+                                            <div class="alert {{message.tags}} " role="alert">
+                                                <div class="iq-alert-text"><b>Alert</b> {{message}}</div>
+                                            </div>
+                                            {% endfor %}
+                                            <form id="orderForm">
+                                                <div class="input-group mb-3">
+                                                    <input type="hidden" id="orderId" name="order_id" value="{{ order.id }}">
+                                                    <input type="text" id="customerInput" name="customer" placeholder="Choose Customer"
+                                                        aria-describedby="button-addon2" class="form-control"
+                                                        value="{{ order.customer }}">
+                                                    <button class="btn btn-outline-primary" type="button" data-toggle="modal"
+                                                        data-target=".bd-example-modal-lg" data-toggle="tooltip" data-placement="top"
+                                                        title="" data-original-title="Add Customer" id="button-addon2">
+                                                        <svg class="svg-icon" id="p-dash10" width="20" height="20"
+                                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                                            <circle cx="8.5" cy="7" r="4"></circle>
+                                                            <polyline points="17 11 19 13 23 9"></polyline>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-lg-6">
+                                    
+                                </div>
+                        <div class="card-body">
+
+
+                            {% include 'ajaxtemplates/purchase_items_table.html' %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

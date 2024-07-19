@@ -1,5 +1,6 @@
 {% extends 'index.html' %}
-{% block  content %}
+{% block content %}
+
 <style>
     .m-status-false{
         opacity: .3;
@@ -13,7 +14,7 @@
             <div class="col-lg-12">
                 <div class="d-flex flex-wrap flex-wrap align-items-center justify-content-between mb-4">
                     <div>
-                        <h4 class="mb-3">Product List</h4>
+                        <h4 class="mb-3">Purchase List</h4>
                         {% for message in messages %}
                        <div class="alert {{message.tags}} " role="alert">
                            <div class="iq-alert-text"><b>Alert</b> {{message}}</div>
@@ -21,8 +22,8 @@
                         {% endfor %}
                         <p class="mb-0"></p>
                     </div>
-                    <a href="{%url 'add_product' %}" class="btn btn-primary add-list"><i
-                            class="las la-plus mr-3"></i>Add Product</a>
+                    <a href="{%url 'add_purchase' %}" class="btn btn-primary add-list"><i
+                            class="las la-plus mr-3"></i>Add Purchase</a>
                 </div>
             </div>
             <div class="col-lg-12">
@@ -36,13 +37,13 @@
                                         <label for="checkbox1" class="mb-0"></label>
                                     </div>
                                 </th>
-                                <th></th>
-                                <th>Product Name</th>
+                                
+                                <th>Purchase Number</th>
                                 <!-- <th>Code</th> -->
-                                <th>Category</th>
+                                <th>Product</th>
                                 <th>Price</th>
                                 <th>Tax</th>
-                                <th>Stock</th>
+                                <th>Quantity</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -56,13 +57,6 @@
                                     <div class="checkbox d-inline-block">
                                         <input type="checkbox" class="checkbox-input" id="checkbox2">
                                         <label for="checkbox2" class="mb-0"></label>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <img src="{{m.image.url}}"
-                                            class="img-fluid rounded avatar-50 mr-3" alt="image">
-                                        
                                     </div>
                                 </td>
                                 <td>
@@ -187,4 +181,5 @@
         </div>
     </div>
 </div>
+
 {% endblock %}

@@ -1,3 +1,4 @@
+
 from django.shortcuts import render, redirect
 from .models import *
 from django.contrib import messages
@@ -5,6 +6,7 @@ from .forms import ProductForm
 from django.http import HttpResponse
 from POS.models import *
 from django.contrib.auth.decorators import login_required
+
 
 
 # Create your views here.
@@ -204,6 +206,16 @@ def list_customer(request):
         "customer":customer
     }
     return render(request,"list-customers.html",context)
+
+
+# Purchases.................................................
+
+
+def purchase(request):
+    return render(request,'purchase.html')
+
+def add_purchase(request):
+    return render(request,'add-purchase.html')
 
 
 

@@ -1,5 +1,14 @@
+from django.urls import path, include
+from .import views 
+from .api import serializer_view
 from django.urls import path 
-from .import views  
+# serializer view__________________________________
+
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
 
 
 
@@ -8,7 +17,6 @@ urlpatterns = [
     # vendor management ..............................
     path("add_vendor",views.add_vendor,name="add_vendor"),
     path("list_vendor",views.list_vendor,name="list_vendor"),
-
 
     #product management........................................
     path('add-category/', views.add_category, name='add_category'),
@@ -19,7 +27,23 @@ urlpatterns = [
     path('AddTax', views.AddTax, name='AddTax'),
     path('ListTax', views.ListTax, name='ListTax'),
 
-
     path("add_customer/<int:pk>",views.add_customer,name="add_customer"),
     path("list_customer",views.list_customer,name="list_customer"),
+
+    # purchases....................
+
+    path("purchase",views.purchase,name="purchase"),
+    path("add_purchase",views.add_purchase,name="add_purchase"),
+
+
+    #api datas
+
+    path("product_list",serializer_view.product_list,name="product_list"),
+    path("product_detail/<int:pk>",serializer_view.product_detail,name="product_detail"),
+
+]
+
+urlpatterns += [
+    path('api/token/', serializer_view.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

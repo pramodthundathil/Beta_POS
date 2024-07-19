@@ -35,11 +35,13 @@ def POS(request,pk):
     customer = Customer.objects.all()
     order = Order.objects.get(id = pk)
     product = Product.objects.all()
+    invoice = Order.objects.all().order_by('-id')[:6]
 
     context = {
         "customer":customer,
         "order":order,
-        'product':product
+        'product':product,
+        "invoice":invoice
     }
     return render(request,'pos.html',context)
 
@@ -108,7 +110,7 @@ def AddItemsToorder(reuest):
 
 @login_required(login_url='SignIn')
 def list_sale(request):
-    order = Order.objects.all()
+    order = Order.objects.all().order_by('-order_date')
 
     context = {
          "order":order

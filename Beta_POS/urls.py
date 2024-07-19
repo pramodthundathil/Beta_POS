@@ -9,11 +9,17 @@ urlpatterns = [
     path("", include('Home.urls')),
     path("inventory/", include('Inventory.urls')),
     path("pos/", include('POS.urls')),
+   
 ]
+   
 
 # Serve media files in development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+from django.urls import path
+
+
 
 # Define error handlers
 handler404 = 'Home.views.custom_404'
