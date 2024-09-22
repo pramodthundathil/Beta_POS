@@ -1,6 +1,6 @@
 from django.urls import path, include
 from .import views 
-from .api import serializer_view
+from .api import api_views
 from django.urls import path 
 # serializer view__________________________________
 
@@ -38,12 +38,14 @@ urlpatterns = [
 
     #api datas
 
-    path("product_list",serializer_view.product_list,name="product_list"),
-    path("product_detail/<int:pk>",serializer_view.product_detail,name="product_detail"),
+    path("product_list",api_views.product_list,name="product_list"),
+    path("product_detail/<int:pk>",api_views.product_detail,name="product_detail"),
+    path("product_add",api_views.product_add,name="product_add"),
+    path("product_add_new",api_views.ProductListCreateView.as_view(),name="product_add_new"),
 
 ]
 
 urlpatterns += [
-    path('api/token/', serializer_view.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/', api_views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
