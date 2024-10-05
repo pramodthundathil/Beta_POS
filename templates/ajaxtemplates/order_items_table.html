@@ -36,17 +36,23 @@
         <div class="header-title">
             <form id="payment" action="">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label>Total Amount:</label>
                         <input type="number" class="form-control" readonly value="{{order.total_amount}}" name="total_amount">
                     </div>
-                    <div class="col-md-4">
-                        <label >Amount Paid:</span>
+                    <div class="col-md-3">
+                        <label >Amount Paid:</label>
                             <br>
                         <input type="number" class="form-control" id="amount-paid" value="{{order.payed_amount}}" name="amount_paid">
                     </div>
-                    <div class="col-md-4">
-                        <label >Balance amount:</span>
+                    <div class="col-md-3">
+                        <label >Discount amount:</label>
+                <br>
+                            <input type="number" class="form-control" id="discount-amount" value="{{order.discount}}" name="discount_amount">
+                        
+                    </div>
+                    <div class="col-md-3">
+                        <label >Balance amount:</label>
                 <br>
                             <input type="number" readonly class="form-control" id="balance-amount" value="{{order.balance_amount}}" name="balance_amount">
                         
@@ -54,11 +60,14 @@
                     <div class="col-md-12">
                         <h3 id="payment-status">{{order.payment_status1}}</h3>
                     </div>
-                    <div class="col-md-6 mt-3">
+                    <div class="col-md-4 mt-3">
                         <a href="{%url 'invoice' order.id %}" target="_blank" class="btn btn-primary">Save and Print Invoice</a>
                     </div>
-                    <div class="col-md-6 mt-3">
+                    <div class="col-md-4 mt-3">
                         <a href="" class="btn btn-secondary">Save</a>
+                    </div>
+                    <div class="col-md-4 mt-3">
+                        <a href="" class="btn btn-info">Discount</a>
                     </div>
                 </div>
             </form>
@@ -104,4 +113,48 @@
             });
         });
     });
+
+
+    $(document).ready(function () {
+    function calculateBalance() {
+        var amountPaid = parseFloat($('#amount-paid').val()) || 0;
+        var discountAmount = parseFloat($('#discount-amount').val()) || 0;
+        var totalAmount = parseFloat($('input[name="total_amount"]').val());
+        var discountedTotal = totalAmount - discountAmount;
+        var balanceAmount = discountedTotal - amountPaid;
+
+        $('#balance-amount').val(balanceAmount);
+
+        var paymentStatus;
+        if (amountPaid == 0) {
+            paymentStatus = 'UNPAID';
+        } else if (amountPaid >= discountedTotal) {
+            paymentStatus = 'PAID';
+        } else {
+            paymentStatus = 'PARTIALLY';
+        }
+
+        $('#payment-status').text(paymentStatus);
+
+        // Send AJAX request to update the backend
+        $.ajax({
+            url: "{% url 'update_order_payment' order.id %}",
+            type: "POST",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                payed_amount: amountPaid,
+                discount: discountAmount
+            },
+            success: function (response) {
+                console.log("Order payment updated successfully.");
+            },
+            error: function (xhr, errmsg, err) {
+                console.log("Error updating order payment:", errmsg);
+            }
+        });
+    }
+
+    $('#amount-paid, #discount-amount').on('input', calculateBalance);
+});
+
 </script>

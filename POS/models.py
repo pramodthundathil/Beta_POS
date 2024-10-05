@@ -11,6 +11,7 @@ class Order(models.Model):
     total_tax = models.FloatField(default=0)
     payment_status1 = models.CharField(max_length=20, default='UNPAID', choices=(("UNPAID","UNPAID"),("PAID","PAID"),("PARTIALLY","PARTIALLY")))
     payment_status = models.BooleanField(default=False)
+    discount = models.FloatField(default=0)
 
     payed_amount = models.FloatField(default=0)
     balance_amount = models.FloatField()
@@ -25,6 +26,12 @@ class Order(models.Model):
         
         self.total_amount = total_amount
         self.total_tax = total_tax
+        self.save()
+        
+    def calculate_balance(self):
+        # Calculate balance amount based on total, discount, and amount paid
+        discounted_total = self.total_amount - self.discount
+        self.balance_amount = discounted_total - self.payed_amount
         self.save()
         
     def save(self, *args, **kwargs):

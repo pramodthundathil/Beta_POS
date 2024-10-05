@@ -15,6 +15,9 @@ urlpatterns = [
     path('update_order_item_quantity', views.update_order_item_quantity, name='update_order_item_quantity'),
     path('update_order_payment/<int:order_id>/', views.update_order_payment, name='update_order_payment'),
     path("invoice/<int:pk>",views.invoice,name="invoice"),
+    path('update_order_payment/<int:order_id>/', views.update_order_payment, name='update_order_payment'),
+    path("AddDiscount",views.AddDiscount,name="AddDiscount"),
+    path("Listdiscount",views.Listdiscount,name="Listdiscount"),
 
     
 ]

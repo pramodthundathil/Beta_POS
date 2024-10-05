@@ -208,3 +208,30 @@ def invoice(request,pk):
     return render(request,"invoice.html",context)
 
 
+@csrf_exempt
+def update_order_payment(request, order_id):
+    if request.method == 'POST':
+        order = Order.objects.get(id=order_id)
+        payed_amount = float(request.POST.get('payed_amount', 0))
+        discount = float(request.POST.get('discount', 0))
+
+        # Update the order
+        order.payed_amount = payed_amount
+        order.discount = discount
+        order.calculate_balance()
+        
+         # Render the order items table
+        order_items_html = render_to_string('order_items_table.html', {'order': order})
+        return JsonResponse({"success": True, "html": order_items_html})
+        
+    return JsonResponse({"success": False, "error": "Invalid request"})
+
+
+def AddDiscount(request):
+    return render(request,"add-discount.html")
+
+
+def Listdiscount(request):
+    return render(request,"list-discount.html")
+
+
